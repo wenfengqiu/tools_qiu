@@ -3,9 +3,12 @@ import numpy as np
 from ..te_tools.calculate_te import calculate_te
 
 
-def calculate_hte(df, criterion, is_cat, n_bins, t, X_exo, X_end, y, iv, conf_level):
+def calculate_hte(
+    df, criterion, is_cat, n_bins, t, X_exo, X_end, y, iv, conf_level=0.95
+):
     """
     calculate treatment effects for subsets based on a selection criteria
+    treatment effect using the entire df is also calculated for reference
 
     Args:
       df: data
@@ -43,6 +46,7 @@ def calculate_hte(df, criterion, is_cat, n_bins, t, X_exo, X_end, y, iv, conf_le
                     )
                 ]
             )
+            result_row["subset_name"] = value
             results_df = pd.concat([results_df, result_row], ignore_index=True)
 
     else:
@@ -74,6 +78,27 @@ def calculate_hte(df, criterion, is_cat, n_bins, t, X_exo, X_end, y, iv, conf_le
                         )
                     ]
                 )
+
+                result_row["subset_name"] = (
+                    str(int(round(((i + 1) / n_bins) * 100))) + "%"
+                )
                 results_df = pd.concat([results_df, result_row], ignore_index=True)
+
+    # add estimates from the entire data for reference
+    result_row = pd.DataFrame.from_records(
+        [
+            calculate_te(
+                df=df,
+                t=t,
+                X_exo=X_exo,
+                X_end=X_end,
+                y=y,
+                iv=iv,
+                conf_level=conf_level,
+            )
+        ]
+    )
+    result_row["subset_name"] = "all"
+    results_df = pd.concat([results_df, result_row], ignore_index=True)
 
     return results_df
