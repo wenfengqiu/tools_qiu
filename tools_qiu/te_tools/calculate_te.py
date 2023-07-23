@@ -18,11 +18,11 @@ def calculate_te(df, t, X_exo, X_end, y, iv, conf_level):
     Returns:
       a dictionary with estimates
     """
-    y_c, y_t = df.groupby(t)[y].mean().sort_values(ascending=True)
+    y_c, y_t = df.groupby(t)[y].mean().sort_index(ascending=True)
     end_c, end_t = 0, 0
     dependent = df[y]
     if iv:
-        end_c, end_t = df.groupby(t)[X_end].mean().sort_values(ascending=True)
+        end_c, end_t = df.groupby(t)[X_end].mean().sort_index(ascending=True)
         exo = df[X_exo]
         exo = sm.add_constant(exo)
         end = df[X_end]
