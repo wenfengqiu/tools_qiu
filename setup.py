@@ -15,7 +15,7 @@ atexit.register(clean_build_folders)
 
 setup(
     name="tools_qiu",
-    version="0.0.1",
+    version="0.1.1",
     author="Wenfeng Qiu",
     url="https://github.com/wenfengqiu/tools_qiu",
     author_email="wenfengqiu@hotmail.com",
