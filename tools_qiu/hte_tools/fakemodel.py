@@ -9,8 +9,9 @@ class FakeModel:
     to save resources
     """
 
-    def __init__(self):
+    def __init__(self, prob_treatment):
         self.is_fitted = False
+        self.prob_treatment = prob_treatment
 
     def fit(self, X, y):
         self.is_fitted = True
@@ -20,3 +21,9 @@ class FakeModel:
             raise ValueError("Model has not been fitted. Call fit() before predict().")
 
         return np.zeros(len(X))
+
+    def predict_proba(self, X):
+        if not self.is_fitted:
+            raise ValueError("Model has not been fitted. Call fit() before predict().")
+
+        return np.repeat(self.prob_treatment, len(X))
