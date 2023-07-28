@@ -26,4 +26,8 @@ class FakeModel:
         if not self.is_fitted:
             raise ValueError("Model has not been fitted. Call fit() before predict().")
 
-        return np.repeat(self.prob_treatment, len(X))
+        array_0 = np.repeat(1 - self.prob_treatment, len(X))
+        array_1 = np.repeat(self.prob_treatment, len(X))
+        result = np.column_stack((array_0, array_1))
+
+        return result
