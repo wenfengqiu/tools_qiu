@@ -23,8 +23,12 @@ def calculate_te(df, t, X_exo, X_end, y, iv, conf_level):
     dependent = df[y]
     if iv:
         end_c, end_t = df.groupby(t)[X_end].mean().sort_index(ascending=True)
-        exo = df[X_exo]
-        exo = sm.add_constant(exo)
+        if X_exo is None:
+            df["intercept"] = 1
+            exo = df["intercept"]
+        else:
+            exo = df[X_exo]
+            exo = sm.add_constant(exo)
         end = df[X_end]
         instruments = df[t]
         model = IV2SLS(dependent, exo, end, instruments)
