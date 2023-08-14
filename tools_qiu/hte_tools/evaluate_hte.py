@@ -32,7 +32,7 @@ def evaluate_hte(
         start_point = int(df.shape[0] * 1 / 100)
     if search_step is None:
         # increase the search_step to decrease searching time
-        search_step = min(1, int(df.shape[0] / 10000))
+        search_step = max(1, int(df.shape[0] / 10000))
 
     df = df.sort_values(by=criterion, ascending=False).reset_index(drop=True)
 
@@ -57,6 +57,7 @@ def evaluate_hte(
     criterion_cutoff = df.loc[df.index == i, criterion].values[0]
 
     result_dict = {
+        "p_x": p_x,
         "p_y": p_y,
         "p_users": p_users,
         "criterion_cutoff": criterion_cutoff,
