@@ -1,4 +1,6 @@
-def evaluate_hte(df, criterion, p_x, y, x, t, approx_level=None, start_point=None):
+def evaluate_hte(
+    df, criterion, p_x, y, x, t, approx_level=None, start_point=None, search_step=None
+):
     """
 
     evaluate the hte model in the following way:
@@ -28,6 +30,9 @@ def evaluate_hte(df, criterion, p_x, y, x, t, approx_level=None, start_point=Non
     if start_point is None:
         # starting from 1% of the data by default
         start_point = int(df.shape[0] * 1 / 100)
+    if search_step is None:
+        # increase the search_step to decrease searching time
+        search_step = min(1, int(df.shape[0] / 10000))
 
     df = df.sort_values(by=criterion, ascending=False).reset_index(drop=True)
 
@@ -43,7 +48,7 @@ def evaluate_hte(df, criterion, p_x, y, x, t, approx_level=None, start_point=Non
     total_lift_x_all = calculate_lift(df.shape[0], x)
     total_lift_y_all = calculate_lift(df.shape[0], y)
 
-    for i in range(start_point, df.shape[0]):
+    for i in range(start_point, df.shape[0], search_step):
         if abs(calculate_lift(i, x) / total_lift_x_all - p_x / 100) <= approx_level:
             break
 
@@ -51,6 +56,11 @@ def evaluate_hte(df, criterion, p_x, y, x, t, approx_level=None, start_point=Non
     p_users = 100 * i / df.shape[0]
     criterion_cutoff = df.loc[df.index == i, criterion].values[0]
 
-    result_dict = {"p_y": p_y, "p_users": p_users, "criterion_cutoff": criterion_cutoff}
+    result_dict = {
+        "p_y": p_y,
+        "p_users": p_users,
+        "criterion_cutoff": criterion_cutoff,
+        "criterion_name": criterion,
+    }
 
     return result_dict
